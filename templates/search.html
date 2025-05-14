@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>🔍 Job Search</h2>
+
+<!-- Search Form -->
+<form method="get" class="search-form">
+  <input type="text" name="title" placeholder="Job Title" value="{{ request.args.get('title', '') }}">
+  <input type="text" name="location" placeholder="Location" value="{{ request.args.get('location', '') }}">
+  <input type="text" name="skill" placeholder="Skill" value="{{ request.args.get('skill', '') }}">
+
+  <select name="sort_by">
+    <option value="">Sort By</option>
+    <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Job Title</option>
+    <option value="location" {% if sort_by == 'location' %}selected{% endif %}>Location</option>
+
+  </select>
+
+  <select name="sort_order">
+    <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>⬆ Ascending</option>
+    <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>⬇ Descending</option>
+  </select>
+
+  <button type="submit">🔎 Search</button>
+  <a href="{{ url_for('search') }}" class="reset-btn">Reset</a>
+</form>
+
+<!-- Results Count -->
+<p class="results-count">🔍 <strong>{{ "{:,}".format(count) }}</strong> jobs found</p>
+
+<!-- Job Cards -->
+{% for job in jobs %}
+  <div class="job-card">
+    <h3>{{ job.jobtitle }} <span class="at-company">@ {{ job.company }}</span></h3>
+    <p><strong>📍 Location:</strong> {{ job.joblocation_address }}</p>
+
+    <p><strong>💡 Skills:</strong> 
+      {% if job.skills %}
+        {% for skill in job.skills.split(', ') %}
+          <span class="skill-tag">{{ skill }}</span>
+        {% endfor %}
+      {% else %}
+        <span style="color: #888;">Not Specified</span>
+      {% endif %}
+    </p>
+
+    {% if job.jobdescription %}
+      <p class="job-desc-preview"><em>{{ job.jobdescription[:200] }}...</em></p>
+    {% endif %}
+  </div>
+{% endfor %}
+
+<!-- Pagination -->
+<div class="pagination">
+  {% if page > 1 %}
+    <a href="{{ url_for('search', title=title, location=location, skill=skill, sort_by=sort_by, sort_order=sort_order, page=1) }}" title="First Page">&laquo;&laquo;</a>
+    <a href="{{ url_for('search', title=title, location=location, skill=skill, sort_by=sort_by, sort_order=sort_order, page=page-1) }}" title="Previous Page">&laquo;</a>
+  {% endif %}
+
+  {% for p in page_range %}
+    {% if p == page %}
+      <span class="current">{{ p }}</span>
+    {% else %}
+      <a href="{{ url_for('search', title=title, location=location, skill=skill, sort_by=sort_by, sort_order=sort_order, page=p) }}">{{ p }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if page < total_pages %}
+    <a href="{{ url_for('search', title=title, location=location, skill=skill, sort_by=sort_by, sort_order=sort_order, page=page+1) }}" title="Next Page">&raquo;</a>
+    <a href="{{ url_for('search', title=title, location=location, skill=skill, sort_by=sort_by, sort_order=sort_order, page=total_pages) }}" title="Last Page">&raquo;&raquo;</a>
+  {% endif %}
+</div>
+{% endblock %}

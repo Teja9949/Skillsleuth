@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skill Finder</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <!-- Full-Page Loading Bar -->
+<div id="loading-bar"></div>
+  <nav>
+    <a href="{{ url_for('home') }}">🏠 Home</a> |
+    <a href="{{ url_for('search') }}">🔍 Search</a> |
+    <a href="{{ url_for('analytics') }}">📊 Analytics</a> |
+  </nav>
+
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+  {% block scripts %}
+  {% endblock %}
+</body>
+</html>

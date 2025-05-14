@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>📊 Job Market Analytics</h2>
+
+<!-- Filter Form -->
+<form id="analytics-filters" class="filter-form">
+  <div class="filter-group">
+    <label for="city">City:</label>
+    <select id="city" name="city">
+      <option value="">All</option>
+      {% for city in all_cities %}
+        <option value="{{ city }}">{{ city }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label for="type">Employment Type:</label>
+    <select id="type" name="type">
+      <option value="">All</option>
+      {% for etype in employment_types %}
+        <option value="{{ etype }}">{{ etype }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="button" id="resetBtn" class="reset-btn">Reset</button>
+</form>
+
+<!-- Chart Grid (2x2 layout) -->
+<div class="chart-grid">
+  <div class="chart-container"><canvas id="topSkillsChart"></canvas></div>
+  <div class="chart-container"><canvas id="cityChart"></canvas></div>
+  <div class="chart-container"><canvas id="trendChart"></canvas></div>
+  <div class="chart-container"><canvas id="sentimentChart"></canvas></div>
+</div>
+
+<div style="margin-top: 20px; text-align: center;">
+  <button onclick="downloadAllChartsAsImage()">Download Skills Chart</button>
+</div>
+
+<!-- CSS Spinner -->
+<div id="spinner" class="spinner-overlay" style="display: none;">
+  <div class="spinner"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  window.initialTopSkills = JSON.parse(`{{ top_skills | tojson | safe }}`);
+  window.initialCityData = JSON.parse(`{{ jobs_by_city | tojson | safe }}`);
+  window.jobsByWeek = JSON.parse(`{{ jobs_by_week | tojson | safe }}`);
+  window.sentimentByCity = JSON.parse(`{{ sentiment_by_city | tojson | safe }}`);
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}
